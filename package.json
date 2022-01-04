@@ -9,7 +9,8 @@
     "pretest": "eslint .",
     "test": "lab -t 60",
     "lintfix": "lint-staged",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "build": "echo this wont work"
   },
   "publishConfig": {
     "registry": "https://ironsrc.jfrog.io/ironsrc/api/npm/npmjs-local"
