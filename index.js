@@ -21,10 +21,10 @@ const MysqlDriver = Base.extend({
 
     if (!internals.notransactions) {
       return this.runSql('SET AUTOCOMMIT=0;')
-        .then(function () {
-          return self.runSql('START TRANSACTION;');
-        })
-        .nodeify(cb);
+          .then(function () {
+            return self.runSql('START TRANSACTION;');
+          })
+          .nodeify(cb);
     } else return Promise.resolve().nodeify(cb);
   },
 
@@ -86,10 +86,10 @@ const MysqlDriver = Base.extend({
       }
     }
     const constraint = this.createColumnConstraint(
-      spec,
-      options,
-      tableName,
-      name
+        spec,
+        options,
+        tableName,
+        name
     );
     return {
       foreignKey: constraint.foreignKey,
@@ -164,9 +164,9 @@ const MysqlDriver = Base.extend({
 
   renameTable: function (tableName, newTableName, callback) {
     const sql = util.format(
-      'RENAME TABLE `%s` TO `%s`',
-      tableName,
-      newTableName
+        'RENAME TABLE `%s` TO `%s`',
+        tableName,
+        newTableName
     );
     return this.runSql(sql).nodeify(callback);
   },
@@ -207,8 +207,8 @@ const MysqlDriver = Base.extend({
     }
 
     this.runSql(
-      util.format('CREATE DATABASE %s `%s` %s', ifNotExists, dbName, spec),
-      callback
+        util.format('CREATE DATABASE %s `%s` %s', ifNotExists, dbName, spec),
+        callback
     );
   },
 
@@ -231,16 +231,16 @@ const MysqlDriver = Base.extend({
     }
 
     this.runSql(
-      util.format('DROP DATABASE %s `%s`', ifExists, dbName),
-      callback
+        util.format('DROP DATABASE %s `%s`', ifExists, dbName),
+        callback
     );
   },
 
   removeColumn: function (tableName, columnName, callback) {
     const sql = util.format(
-      'ALTER TABLE `%s` DROP COLUMN `%s`',
-      tableName,
-      columnName
+        'ALTER TABLE `%s` DROP COLUMN `%s`',
+        tableName,
+        columnName
     );
 
     return this.runSql(sql).nodeify(callback);
@@ -263,9 +263,9 @@ const MysqlDriver = Base.extend({
 
       if (typeof column === 'object' && column.name) {
         columnSpec = util.format(
-          '`%s`%s',
-          column.name,
-          column.length ? util.format('(%s)', parseInt(column.length)) : ''
+            '`%s`%s',
+            column.name,
+            column.length ? util.format('(%s)', parseInt(column.length)) : ''
         );
       } else if (typeof column === 'string') {
         columnSpec = util.format('`%s`', column);
@@ -275,11 +275,11 @@ const MysqlDriver = Base.extend({
     }
 
     const sql = util.format(
-      'ALTER TABLE `%s` ADD %s INDEX `%s` (%s)',
-      tableName,
-      unique ? 'UNIQUE ' : '',
-      indexName,
-      columnsList.join(', ')
+        'ALTER TABLE `%s` ADD %s INDEX `%s` (%s)',
+        tableName,
+        unique ? 'UNIQUE ' : '',
+        indexName,
+        columnsList.join(', ')
     );
     return this.runSql(sql).nodeify(callback);
   },
@@ -288,12 +288,12 @@ const MysqlDriver = Base.extend({
     // tableName is optional for other drivers, but required for mySql.
     // So, check the args to ensure they are valid
     if (
-      arguments.length === 1 ||
-      (arguments.length === 2 && typeof indexName === 'function')
+        arguments.length === 1 ||
+        (arguments.length === 2 && typeof indexName === 'function')
     ) {
       callback = indexName;
       const err = new Error(
-        'Illegal arguments, must provide "tableName" and "indexName"'
+          'Illegal arguments, must provide "tableName" and "indexName"'
       );
 
       if (typeof indexName === 'function') {
@@ -313,34 +313,34 @@ const MysqlDriver = Base.extend({
   renameColumn: function (tableName, oldColumnName, newColumnName, callback) {
     const self = this;
     const columnTypeSql = util.format(
-      "SELECT COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '%s' AND COLUMN_NAME = '%s'",
-      tableName,
-      oldColumnName
+        "SELECT COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '%s' AND COLUMN_NAME = '%s'",
+        tableName,
+        oldColumnName
     );
 
     return this.runSql(columnTypeSql)
-      .then(function (result) {
-        const columnType = result[0].COLUMN_TYPE;
-        const alterSql = util.format(
-          'ALTER TABLE `%s` CHANGE `%s` `%s` %s',
-          tableName,
-          oldColumnName,
-          newColumnName,
-          columnType
-        );
+        .then(function (result) {
+          const columnType = result[0].COLUMN_TYPE;
+          const alterSql = util.format(
+              'ALTER TABLE `%s` CHANGE `%s` `%s` %s',
+              tableName,
+              oldColumnName,
+              newColumnName,
+              columnType
+          );
 
-        return self.runSql(alterSql);
-      })
-      .nodeify(callback);
+          return self.runSql(alterSql);
+        })
+        .nodeify(callback);
   },
 
   changeColumn: function (tableName, columnName, columnSpec, callback) {
     const constraint = this.createColumnDef(columnName, columnSpec);
     const sql = util.format(
-      'ALTER TABLE `%s` CHANGE COLUMN `%s` %s',
-      tableName,
-      columnName,
-      constraint.constraints
+        'ALTER TABLE `%s` CHANGE COLUMN `%s` %s',
+        tableName,
+        columnName,
+        constraint.constraints
     );
 
     const exec = function () {
@@ -352,42 +352,42 @@ const MysqlDriver = Base.extend({
 
     if (columnSpec.unique === false) {
       return this.removeIndex(tableName, columnName)
-        .then(function () {
-          return exec();
-        })
-        .nodeify(callback);
+          .then(function () {
+            return exec();
+          })
+          .nodeify(callback);
     } else return exec().nodeify(callback);
   },
 
   addMigrationRecord: function (name, callback) {
     const formattedDate = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
     this.runSql(
-      'INSERT INTO `' +
+        'INSERT INTO `' +
         internals.migrationTable +
         '` (`name`, `run_on`) VALUES (?, ?)',
-      [name, formattedDate],
-      callback
+        [name, formattedDate],
+        callback
     );
   },
 
   addSeedRecord: function (name, callback) {
     const formattedDate = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
     this.runSql(
-      'INSERT INTO `' +
+        'INSERT INTO `' +
         internals.seedTable +
         '` (`name`, `run_on`) VALUES (?, ?)',
-      [name, formattedDate],
-      callback
+        [name, formattedDate],
+        callback
     );
   },
 
   addForeignKey: function (
-    tableName,
-    referencedTableName,
-    keyName,
-    fieldMapping,
-    rules,
-    callback
+      tableName,
+      referencedTableName,
+      keyName,
+      fieldMapping,
+      rules,
+      callback
   ) {
     if (arguments.length === 5 && typeof rules === 'function') {
       callback = rules;
@@ -398,14 +398,14 @@ const MysqlDriver = Base.extend({
       return fieldMapping[key];
     });
     const sql = util.format(
-      'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (%s) REFERENCES `%s` (%s) ON DELETE %s ON UPDATE %s',
-      tableName,
-      keyName,
-      this.quoteDDLArr(columns).join(', '),
-      referencedTableName,
-      this.quoteDDLArr(referencedColumns).join(', '),
-      rules.onDelete || 'NO ACTION',
-      rules.onUpdate || 'NO ACTION'
+        'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (%s) REFERENCES `%s` (%s) ON DELETE %s ON UPDATE %s',
+        tableName,
+        keyName,
+        this.quoteDDLArr(columns).join(', '),
+        referencedTableName,
+        this.quoteDDLArr(referencedColumns).join(', '),
+        rules.onDelete || 'NO ACTION',
+        rules.onUpdate || 'NO ACTION'
     );
 
     return this.runSql(sql).nodeify(callback);
@@ -413,9 +413,9 @@ const MysqlDriver = Base.extend({
 
   removeForeignKey: function (tableName, keyName, options, callback) {
     let sql = util.format(
-      'ALTER TABLE `%s` DROP FOREIGN KEY `%s`',
-      tableName,
-      keyName
+        'ALTER TABLE `%s` DROP FOREIGN KEY `%s`',
+        tableName,
+        keyName
     );
 
     if (typeof options === 'function') {
@@ -423,21 +423,21 @@ const MysqlDriver = Base.extend({
     }
 
     return this.runSql(sql)
-      .then(
-        function () {
-          if (options && options.dropIndex === true) {
-            sql = util.format(
-              'ALTER TABLE `%s` DROP INDEX `%s`',
-              tableName,
-              keyName
-            );
-            return this.runSql(sql);
-          } else {
-            return Promise.resolve();
-          }
-        }.bind(this)
-      )
-      .nodeify(callback);
+        .then(
+            function () {
+              if (options && options.dropIndex === true) {
+                sql = util.format(
+                    'ALTER TABLE `%s` DROP INDEX `%s`',
+                    tableName,
+                    keyName
+                );
+                return this.runSql(sql);
+              } else {
+                return Promise.resolve();
+              }
+            }.bind(this)
+        )
+        .nodeify(callback);
   },
 
   runSql: function () {
@@ -463,7 +463,7 @@ const MysqlDriver = Base.extend({
     let params = Array.prototype.slice.call(args);
     const sql = params.shift();
     const callback =
-      typeof params[params.length - 1] === 'function' ? params.pop() : null;
+        typeof params[params.length - 1] === 'function' ? params.pop() : null;
 
     if (params.length > 0 && Array.isArray(params[0])) {
       params = params[0];
@@ -481,13 +481,13 @@ const MysqlDriver = Base.extend({
 
   close: function (callback) {
     return new Promise(
-      function (resolve, reject) {
-        const cb = function (err, data) {
-          return err ? reject(err) : resolve(data);
-        };
+        function (resolve, reject) {
+          const cb = function (err, data) {
+            return err ? reject(err) : resolve(data);
+          };
 
-        this.connection.end(cb);
-      }.bind(this)
+          this.connection.end(cb);
+        }.bind(this)
     ).nodeify(callback);
   }
 });
@@ -506,13 +506,28 @@ exports.connect = function (config, intern, callback) {
   type = internals.mod.type;
 
   internals.interfaces.SeederInterface._makeParamArgs = dummy;
-
+  if (config.ssl.toString() === "Amazon RDS") {
+    const RDS = require("@aura-backend-kit/rds");
+    const rdsConfig = {
+      username: config.user,
+      hostname: config.host,
+      regioni: config.region,
+      port: Number(config.port),
+    };
+    const rds = new RDS(rdsConfig);
+    config = {
+      ...config,
+      ssl: "Amazon RDS",
+      authPlugins:  rds.getAuthPlugin()
+    }
+    delete config.region;
+    delete config.driver;
+  }
   if (typeof mysql.createConnection === 'undefined') {
     db = config.db || mysql.createClient(config);
   } else {
     db = config.db || mysql.createConnection(config);
   }
-
   db.connect(function (err) {
     if (err) {
       return callback(err);
