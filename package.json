@@ -11,6 +11,9 @@
     "lintfix": "lint-staged",
     "prepare": "husky install"
   },
+  "publishConfig": {
+    "registry": "https://ironsrc.jfrog.io/ironsrc/api/npm/npmjs-local"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "npm run lintfix"
