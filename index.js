@@ -506,7 +506,7 @@ exports.connect = function (config, intern, callback) {
   type = internals.mod.type;
 
   internals.interfaces.SeederInterface._makeParamArgs = dummy;
-  if (config.ssl.toString() === "Amazon RDS") {
+  if (config.ssl && config.ssl.toString() === "Amazon RDS") {
     const RDS = require("@aura-backend-kit/rds");
     const rdsConfig = {
       username: config.user,
