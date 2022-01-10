@@ -1,6 +1,6 @@
 {
   "name": "aura-db-migrate-mysql",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "db-migrate mysql driver",
   "main": "index.js",
   "scripts": {
