@@ -506,6 +506,10 @@ exports.connect = function (config, intern, callback) {
   type = internals.mod.type;
 
   internals.interfaces.SeederInterface._makeParamArgs = dummy;
+  if (config.region)
+    delete config.region;
+  if (config.driver)
+    delete config.driver;
   if (config.ssl && config.ssl.toString() === "Amazon RDS") {
     const RDS = require("@aura-backend-kit/rds");
     const rdsConfig = {
@@ -520,8 +524,6 @@ exports.connect = function (config, intern, callback) {
       ssl: "Amazon RDS",
       authPlugins:  rds.getAuthPlugin()
     }
-    delete config.region;
-    delete config.driver;
   }
   if (typeof mysql.createConnection === 'undefined') {
     db = config.db || mysql.createClient(config);
