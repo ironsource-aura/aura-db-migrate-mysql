@@ -1,0 +1,31 @@
+name: Aura Coding Agent
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  issues:
+    types: [opened, assigned]
+  pull_request_review:
+    types: [submitted]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  id-token: write
+  actions: read
+
+jobs:
+  claude-code-action:
+    if: |
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@ai-avengers')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@ai-avengers')) ||
+      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@ai-avengers')) ||
+      (github.event_name == 'issues' && contains(github.event.issue.body, '@ai-avengers'))
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ironsource-aura/aura-shared-gha/actions/ai_coding_agent@main
+        with:
+          github_token: ${{ secrets.AVENGERS_TOKEN }}
